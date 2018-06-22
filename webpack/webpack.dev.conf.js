@@ -40,6 +40,7 @@ const htmlWebpackPlugins = () => {
 }
 
 const devWebpackConfig = merge(baseWebpackConfig, {
+    module: 'development',
     module: {
         // 合并base文件的webpack配置
         rules: utils.styleLoaders({
