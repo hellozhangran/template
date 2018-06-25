@@ -14,81 +14,38 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 const htmlWebpackPlugins = () => {
     const arr = []
-    if (config.singlePage) {
+    const pages = utils.getMultiEntry('html')
+    for (const pathname in pages) {
+        // 配置生成的html文件，定义路径等
         const conf = {
-            filename: config.build.index,
-            template: 'index.html',
-            inject: true,
+            filename: pathname + '.html',
+            template: pages[pathname], // 模板路径
+            chunks: ['vendor', pathname], // 每个html引用的js模块
             minify: {
                 removeComments: true, // 移除注释
                 collapseWhitespace: true, // 折叠在文档树中有助于文本节点的空白区域。
                 removeAttributeQuotes: true, // 移除属性引导
             },
-            chunksSortMode: 'dependency',
+            inject: true, // js插入位置
         }
+        // 需要生成几个html文件，就配置几个HtmlWebpackPlugin对象
         arr.push(new HtmlWebpackPlugin(conf))
-    } else {
-        const pages = utils.getMultiEntry('html')
-        for (const pathname in pages) {
-            // 配置生成的html文件，定义路径等
-            const conf = {
-                filename: pathname + '.html',
-                template: pages[pathname], // 模板路径
-                chunks: ['vendor', pathname], // 每个html引用的js模块
-                minify: {
-                    removeComments: true, // 移除注释
-                    collapseWhitespace: true, // 折叠在文档树中有助于文本节点的空白区域。
-                    removeAttributeQuotes: true, // 移除属性引导
-                },
-                inject: true, // js插入位置
-            }
-            // 需要生成几个html文件，就配置几个HtmlWebpackPlugin对象
-            arr.push(new HtmlWebpackPlugin(conf))
-        }
     }
     return arr
 }
 
 const commonsChunkPlugins = () => {
-    if (config.singlePage) {
-        return [
-            // 公用模块提到vendor文件中
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'vendor',
-                minChunks(module) {
-                    // any required modules inside node_modules are extracted to vendor
-                    return (
-                        module.resource &&
-                        /\.js$/.test(module.resource) &&
-                        module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0
-                    )
-                },
-            }),
-            // webpack代码存放地  使用缓存需要这个
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'manifest',
-                minChunks: Infinity,
-            }),
-            // 提取动态依赖公共代码需要
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'app',
-                async: 'vendor-async',
-                children: true,
-                minChunks: 3,
-            }),
-        ]
-    } else {
-        return [
-            // 公用模块提到vendor文件中
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'vendor',
-                minChunks: 3,
-            }),
-        ]
-    }
+    return [
+        // 公用模块提到vendor文件中
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            minChunks: 3,
+        }),
+    ]
 }
 
 const webpackConfig = merge(baseWebpackConfig, {
+    mode: 'production',
     module: {
         rules: utils.styleLoaders({
             sourceMap: config.build.productionSourceMap,

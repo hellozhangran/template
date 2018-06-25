@@ -1,46 +1,34 @@
 'use strict'
 
-const utils = require('./utils')
-const webpack = require('webpack')
-const config = require('./config')
-const merge = require('webpack-merge')
 const path = require('path')
-const baseWebpackConfig = require('./webpack.base.conf')
+const webpack = require('webpack')
+const merge = require('webpack-merge')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
-
-const HOST = process.env.HOST
-const PORT = process.env.PORT && Number(process.env.PORT)
+const utils = require('./utils')
+const config = require('./config')
+const baseWebpackConfig = require('./webpack.base.conf')
 
 const htmlWebpackPlugins = () => {
     const arr = []
-    if (config.singlePage) {
+    const pages = utils.getMultiEntry('html')
+    for (const pathname in pages) {
+        // 配置生成的html文件，定义路径等
         const conf = {
-            filename: 'index.html',
-            template: 'index.html',
-            inject: true,
+            filename: pathname + '.html',
+            template: pages[pathname], // 模板路径
+            chunks: [pathname], // 每个html引用的js模块
+            inject: true, // js插入位置
         }
+        // 需要生成几个html文件，就配置几个HtmlWebpackPlugin对象
         arr.push(new HtmlWebpackPlugin(conf))
-    } else {
-        const pages = utils.getMultiEntry('html')
-        for (const pathname in pages) {
-            // 配置生成的html文件，定义路径等
-            const conf = {
-                filename: pathname + '.html',
-                template: pages[pathname], // 模板路径
-                chunks: [pathname], // 每个html引用的js模块
-                inject: true, // js插入位置
-            }
-            // 需要生成几个html文件，就配置几个HtmlWebpackPlugin对象
-            arr.push(new HtmlWebpackPlugin(conf))
-        }
     }
     return arr
 }
 
 const devWebpackConfig = merge(baseWebpackConfig, {
-    module: 'development',
+    mode: 'development',
     module: {
         // 合并base文件的webpack配置
         rules: utils.styleLoaders({
@@ -62,8 +50,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         progress: true,
         contentBase: false, // since we use CopyWebpackPlugin.
         compress: true,
-        host: HOST || config.dev.host,
-        port: PORT || config.dev.port,
+        host: config.dev.host,
+        port: config.dev.port,
         open: config.dev.autoOpenBrowser,
         // openPage: 'pages/*.html',  // 自动打开页面时选择打开页面
 
@@ -97,7 +85,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 // const openPages = Object.keys(utils.getMultiEntry('js')).map(e => e + '.html')
 // 自动检索下一个可用端口
 module.exports = new Promise((resolve, reject) => {
-    portfinder.basePort = process.env.PORT || config.dev.port
+    portfinder.basePort = config.dev.port
     portfinder.getPort((err, port) => {
         if (err) {
             reject(err)
@@ -107,16 +95,12 @@ module.exports = new Promise((resolve, reject) => {
             // add port to devServer config
             devWebpackConfig.devServer.port = port
             let arrMessages
-            if (config.singlePage) {
-                arrMessages = [`点击打开页面: http://${devWebpackConfig.devServer.host}:${port}\n`]
-            } else {
-                arrMessages = Object.keys(utils.getMultiEntry('html')).map(
-                    e =>
-                        `点击打开页面: http://${devWebpackConfig.devServer.host}:${port}${
-                            config.dev.assetsPublicPath
-                        }/${e}.html\n`
-                )
-            }
+            arrMessages = Object.keys(utils.getMultiEntry('html')).map(
+                e =>
+                    `点击打开页面: http://${devWebpackConfig.devServer.host}:${port}${
+                        config.dev.assetsPublicPath
+                    }/${e}.html\n`
+            )
             // Add FriendlyErrorsPlugin
             devWebpackConfig.plugins.push(
                 new FriendlyErrorsPlugin({

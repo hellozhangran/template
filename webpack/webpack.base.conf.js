@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const { VueLoaderPlugin } = require('vue-loader')
 const utils = require('./utils')
 const config = require('./config')
 
@@ -11,7 +12,7 @@ function resolve(dir) {
 module.exports = {
     // 根目录
     context: path.resolve(__dirname, '../'),
-    entry: config.singlePage ? { app: './src/main.js' } : utils.getMultiEntry('js'),
+    entry: utils.getMultiEntry('js'),
     output: {
         path: config.build.assetsRoot,
         filename: '[name].js',
@@ -53,18 +54,17 @@ module.exports = {
                     },
                 },
             },
-            // babel处理js可以提前使用es6功能
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 include: [resolve('src')],
             },
-            // 处理相应文件  小于3kb会被base打包而不会http请求
+            // 处理相应文件  小于10kb会被base64打包而不会http请求
             {
                 test: /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
-                    limit: 3 * 1024, // 100k
+                    limit: 10 * 1024, // 10k
                     name: utils.assetsPath('/img/[name].[hash:7].[ext]'),
                 },
             },
@@ -86,6 +86,9 @@ module.exports = {
             },
         ],
     },
+    plugins: [
+        new VueLoaderPlugin()
+    ],
     node: {
         /** 不需要关注
          * node中的属性都是node.js中的模块。 当在浏览器下要访问这些模块的时候，该功能会指定一种处理方式

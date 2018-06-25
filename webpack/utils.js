@@ -55,6 +55,8 @@ exports.cssLoaders = options => {
     }
 
     // https://vue-loader.vuejs.org/en/configurations/extract-css.html
+
+
     return {
         css: generateLoaders(),
         postcss: generateLoaders(),
@@ -80,9 +82,9 @@ exports.styleLoaders = function(options) {
             use: loader,
         })
     }
-
     return output
 }
+
 
 exports.createNotifierCallback = () => {
     const notifier = require('node-notifier')
@@ -103,23 +105,26 @@ exports.createNotifierCallback = () => {
 }
 
 // 获取多级的入口文件
-exports.getMultiEntry = globPath => {
-    globPath = './src/' + config.moduleName + '/**/**/*.' + globPath
+exports.getMultiEntry = fileExt => {
+    let globPath = './src/' + config.moduleName + '/**/*.' + fileExt
     const glob = require('glob')
     let entries = {},
         basename,
         tmp,
         pathname
     glob.sync(globPath).forEach(entry => {
-        basename = path.basename(entry, path.extname(entry))
+        basename = path.basename(entry, '.'+fileExt)
         tmp = entry.split('/').splice(-4)
-        let pathsrc = tmp[0] + '/' + tmp[1] // ./src
+        let pathsrc = tmp[0] + '/' + tmp[1]
         if (tmp[0] == 'src') {
-            pathsrc = tmp[1] // pages
+            pathsrc = tmp[1]
         }
-        pathname = pathsrc + '/' + basename // 正确输出js和html的路径
+        pathname = pathsrc + '/' + basename
         entries[pathname] = entry
     })
 
+    // 输出形如 {'pages/home': './src/pages/home/home.html'}
     return entries
 }
+
+

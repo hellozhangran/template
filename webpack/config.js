@@ -4,7 +4,6 @@ const path = require('path')
 
 module.exports = {
     moduleName: 'pages',
-    singlePage: false,
     dev: {
         env: {
             NODE_ENV: '"development"'
