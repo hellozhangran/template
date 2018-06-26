@@ -1,0 +1,11 @@
+.button{
+    color: red;
+    border: 1px solid silver;
+    border-radius: 20px;
+    height: 40px;
+    min-width: 100px;
+    outline: none;
+    padding: 0px 10px;
+    font-size: 20px;
+    line-height: 40px;
+}

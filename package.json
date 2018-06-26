@@ -1,0 +1,51 @@
+{
+    "name": "vuesample",
+    "description": "A Vue.js project",
+    "version": "1.0.0",
+    "author": "ran <zhang.ran@uneed.com>",
+    "license": "MIT",
+    "private": true,
+
+    "scripts": {
+        "dev": "webpack-dev-server --config ./webpack/webpack.dev.conf.js --hot",
+        "build": "webpack --config ./webpack/webpack.prod.conf.js --progress"
+    },
+
+    "//0": "npm包的匹配符：~2.5.11 安装2.5.x的最新版本，且不低于2.5.11。比如，假如作者更新了2.5.12则npm install时会自动更新到2.5.12的包，尽管此处依旧是~2.5.11",
+    "//1": "npm包的匹配符：^2.5.11 安装2.x.x的最新版本，且不低于2.5.11",
+    "//3": "npm包的匹配符： 2.5.11 明确指定了版本号",
+    "//4": "详见：[node.js 中的版本管理](http://deadhorse.me/nodejs/2014/04/27/semver-in-nodejs.html)",
+    "dependencies": {
+        "vue": "^2.5.11"
+    },
+
+    "devDependencies": {
+        "babel-core": "^6.26.0",
+        "babel-loader": "^7.1.2",
+        "babel-preset-env": "^1.6.0",
+        "babel-preset-stage-3": "^6.24.1",
+        "cross-env": "^5.0.5",
+        "css-loader": "^0.28.7",
+        "file-loader": "^1.1.4",
+        "html-webpack-plugin": "^3.2.0",
+        "vue-loader": "^15.2.4",
+        "vue-template-compiler": "^2.4.4",
+        "webpack": "^4.12.0",
+        "webpack-cli": "^3.0.6",
+        "webpack-dev-server": "^3.1.4",
+        "webpack-merge": "^4.1.2"
+    },
+
+    "//5": "查看该网站http://browserl.ist/，输入browserslist的值能查匹配的机型",
+    "//6": "该配置可以为postcss设置做依赖，其他功能不细说",
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not ie <= 8"
+    ],
+
+    "//babel-preset-env": "替代之前的babel-preset-es2015,es2016等，并可以根据浏览器环境动态的引用不同标准模块",
+    "//babel-preset-stage-3": "主要支持es7中的async await语法。stage-0|stage-1|stage-2|stage-3是es7四个阶段的不同提案，安装的时候根据需要4选1",
+    "//file-loader": "实现用import的方式加载图片文件",
+    "//vue-template-compiler": "vue-loader在编译的时候依赖的一个包，我们不会直接配置，问题是为何还要写在这里呢！去node_modules/vue-loader看下，该包配置在devDependencies中，所以npm install的时候不会自动安装，这或许是个疏忽或许是另有它意 ~"
+}
