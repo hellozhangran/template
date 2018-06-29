@@ -84,6 +84,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
 // const openPages = Object.keys(utils.getMultiEntry('js')).map(e => e + '.html')
 // 自动检索下一个可用端口
+
 module.exports = new Promise((resolve, reject) => {
     portfinder.basePort = config.dev.port
     portfinder.getPort((err, port) => {
@@ -94,12 +95,8 @@ module.exports = new Promise((resolve, reject) => {
             process.env.PORT = port
             // add port to devServer config
             devWebpackConfig.devServer.port = port
-            let arrMessages
-            arrMessages = Object.keys(utils.getMultiEntry('html')).map(
-                e =>
-                    `点击打开页面: http://${devWebpackConfig.devServer.host}:${port}${
-                        config.dev.assetsPublicPath
-                    }/${e}.html\n`
+            let arrMessages = Object.keys(utils.getMultiEntry('html')).map(
+                e => `点击打开页面: http://${devWebpackConfig.devServer.host}:${port}${config.dev.assetsPublicPath}/${e}.html\n`
             )
             // Add FriendlyErrorsPlugin
             devWebpackConfig.plugins.push(

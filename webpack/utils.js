@@ -59,14 +59,7 @@ exports.cssLoaders = options => {
 
     return {
         css: generateLoaders(),
-        postcss: generateLoaders(),
         less: generateLoaders('less'),
-        sass: generateLoaders('sass', {
-            indentedSyntax: true,
-        }),
-        scss: generateLoaders('sass'),
-        stylus: generateLoaders('stylus'),
-        styl: generateLoaders('stylus'),
     }
 }
 
@@ -86,9 +79,10 @@ exports.styleLoaders = function(options) {
 }
 
 
+
+// 出现报错的时候才会调用gai
 exports.createNotifierCallback = () => {
     const notifier = require('node-notifier')
-
     return (severity, errors) => {
         if (severity !== 'error') return
 
